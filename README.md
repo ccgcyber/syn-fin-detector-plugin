@@ -1,0 +1,2 @@
+syn-fin-detector-plugin
+=======================
