@@ -40,6 +40,8 @@ sub run {
 	my @alarms = ();
 	my @warnings = ();
 	
+	my $to_send_message = 0;
+	
 	foreach my $a_line (@nfdump_output) {
 		my @splitted_line = split("\\s+", $a_line);
 		next if scalar @splitted_line != 6;
@@ -52,33 +54,36 @@ sub run {
 			$out_packets >= $alarm_threshold ) {
 			my $alarm_text = "\nSource: $source_ip\nDestination: $destination_ip\nTimeslot: $timeslot \nIn Packets: $in_packets \nOut Packets: $out_packets";
 			push (@alarms, $alarm_text);
+			$to_send_message = 1;
 		} elsif ( $in_packets >= $warning_threshold or 
 			$out_packets >= $warning_threshold) {
 			my $alarm_text = "\nSource: $source_ip\nDestination: $destination_ip\nTimeslot: $timeslot \nIn Packets: $in_packets \nOut Packets: $out_packets";
 			push (@warnings, $alarm_text);
+			$to_send_message = 1;
 		}
 	}
 
-	my $all_alarms = join('\n', @alarms);
-	my $all_warnings = join('\n', @warnings);
+	if ($to_send_message) {
+		my $all_alarms = join('\n', @alarms);
+		my $all_warnings = join('\n', @warnings);
 
-	my $message = "$all_alarms $all_warnings";
-
-my $message = Email::MIME->create(
-  header_str => [
-    From    => 'you@example.com',
-    To      => 'suren.k.n@me.com',
-    Subject => 'Happy birthday!',
-  ],
-  attributes => {
-    encoding => 'quoted-printable',
-    charset  => 'ISO-8859-1',
-  },
-  body_str => "$message",
-);
-use Email::Sender::Simple qw(sendmail);
-sendmail($message);
-
+		my $message = "$all_alarms $all_warnings";
+		my $host_name = `hostname`;
+		my $message = Email::MIME->create(
+		  header_str => [
+		    From    => "nfsen.ddos.plugin\@$host_name",
+		    To      => 'suren.k.n@me.com',
+		    Subject => 'DDOS people',
+		  ],
+		  attributes => {
+		    encoding => 'quoted-printable',
+		    charset  => 'ISO-8859-1',
+		  },
+		  body_str => "$message",
+		);
+		use Email::Sender::Simple qw(sendmail);
+		sendmail($message);
+	}
 
 }
 
