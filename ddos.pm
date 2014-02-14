@@ -34,8 +34,8 @@ sub run {
 
 	my $total_time = 5 * 60;
 
-	my $alarm_threshold = 100 * $total_time;
-	my $warning_threshold = 75 * $total_time;
+	my $alarm_threshold = 2 * $total_time;
+	my $warning_threshold = 1 * $total_time;
 
 	my @alarms = ();
 	my @warnings = ();
