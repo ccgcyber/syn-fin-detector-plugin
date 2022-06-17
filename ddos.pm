@@ -76,8 +76,8 @@ sub run {
 
 			my $email = Email::Simple->create(
 					header => [
-					From      => '"NFSEN DDoS service" <suren@gammon.dawson.k12.ga.us>',
-					To    => '"Suren Nihalani" <suren.k.n@icloud.com>',
+					From      => '"NFSEN DDoS service" <localuser@checkmate.phen>',
+					To    => '"Phen AI" <phen@localhost>',
 					Subject => "DDoS happening",
 					],
 					body => "$message",
